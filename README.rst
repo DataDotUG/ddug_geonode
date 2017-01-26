@@ -1,66 +1,84 @@
 Ddug_Geonode
 ========================
 
-GeoNode template project. Generates a django project with GeoNode support.
+You should write some docs, it's good for the soul.
 
-Create a custom project
------------------------
+Installation
+------------
 
-Note: You can call your geonode project whatever you like following the naming conventions for python packages (generally lower case with underscores (``_``). In the examples below, replace ``my_geonode`` with whatever you would like to name your project. 
+Install geonode with::
 
-Using Docker
-++++++++++++
+    $ sudo add-apt-repository ppa:geonode/release
 
-To setup your project using Docker, follow these instructions:
+    $ sudo apt-get update
 
-1. Install Docker (for Linux, Mac or Windows).
-2. Run the following command in a terminal.::
+    $ sudo apt-get install geonode
 
-    docker run -v `pwd`:/usr/src/app GeoNode/django:geonode django-admin.py startproject --template=https://github.com/GeoNode/geonode-project/archive/docker.zip -epy,rst,yml my_geonode 
-    cd my_geonode
+Create a new template based on the geonode example project.::
+    
+    $ django-admin startproject my_geonode --template=https://github.com/GeoNode/geonode-project/archive/2.4.zip -epy,rst 
+    $ sudo pip install -e my_geonode
 
-If you experience a permissions problem, make sure that the files belong to your user and not the root user.
+.. note:: You should NOT use the name geonode for your project as it will conflict with the default geonode package name.
 
-Using a Virtualenvironment
-++++++++++++++++++++++++++
-
-To setup your project using a local Virtualenvironment, follow these instructions:
-
-1. Setup your virtualenvironment ``mkvirtualenv my_geonode``
-2. Install django into your virtualenviornment ``pip install Django==1.8.7``
-3. Create your project using the template project::
-
-    django-admin.py startproject --template=https://github.com/GeoNode/geonode-project/archive/master.zip -epy,rst,yml my_geonode
-
-Start your server
-----------------
-
-You need Docker 1.12 or higher, get the latest stable official release for your platform. Run `docker-compose` to start it up (get a cup of coffee or tea while you wait)::
-
-    docker-compose up
-
-Create the tables in your postgres database::
-
-    docker-compose run django python manage.py migrate
-
-Set up a superuser so you can access the admin area::
-
-    docker-compose run django python manage.py createsuperuser
-
-Access the site on http://localhost/
-
-
-Recommended: Track your changes
+Usage
 -----
 
-Step 1. Install Git (for Linux, Mac or Windows).
+Rename the local_settings.py.sample to local_settings.py and edit it's content by setting the SITEURL and SITENAME.
 
-Step 2. Init git locally and do the first commit:
+Edit the file /etc/apache2/sites-available/geonode and change the following directive from:
 
-    git init
+    WSGIScriptAlias / /var/www/geonode/wsgi/geonode.wsgi
+
+to:
+
+    WSGIScriptAlias / /path/to/my_geonode/my_geonode/wsgi.py
     
-    git add *
-    
-    git commit -m "Initial Commit"
+To avoid having to grant apache permissions (i.e. www-data user and group) to your home dir where you likely setup the geonode-project; you may want to instead copy the wsgi.py file next to geonode.wsgi and replace the file name instead of the entire path.
 
-Step 3. Set up a free account on github or bitbucket and make a copy of the repo there.
+    $ cp /path/to/my_geonode/my_geonode/wsgi.py /var/www/geonode/wsgi/wsgi.py
+
+Add the "Directory" directive for your folder like the following example:
+
+    <Directory "/home/vagrant/my_geonode/my_geonode/">
+
+       Order allow,deny
+
+       Options Indexes FollowSymLinks
+
+       Allow from all
+
+       Require all granted
+
+       IndexOptions FancyIndexing
+       
+    </Directory>
+
+Restart apache::
+
+    $ sudo service apache2 restart
+
+Edit the templates in my_geonode/templates, the css and images to match your needs.
+
+In the my_geonode folder run::
+
+    $ python manage.py collectstatic
+
+Github Considerations
+------------------------
+
+While it is helpful to recommit your django project wrapper back to a distributed version control repository. 
+* It is also important to remember that production instances will store security information in the local_settings.py
+* Admin/Devs should always remember to exclude this file in the .gitignore file in the same folder as the .git::
+
+    $ nano .gitignore
+    
+    /{project}/local_settings.py
+
+save, make sure the file is also removed from git cache::
+    
+    $ git rm -f --cache //local_settings.py
+    
+    $ git status
+    
+confirm the file is no longer staged for the next commit or that if it is as "removed"

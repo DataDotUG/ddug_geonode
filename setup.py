@@ -6,7 +6,7 @@ def read(*rnames):
 
 setup(
     name="ddug_geonode",
-    version="0.1",
+    version="0.2",
     author="",
     author_email="",
     description="ddug_geonode, based on GeoNode",
@@ -23,6 +23,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-       'geonode>=2.4.1',
-    ],
+        'django-tastypie==0.11.0',
+    ]
 )

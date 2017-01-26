@@ -3,16 +3,13 @@ import os
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 SITEURL = "http://localhost:8000/"
-POSTGIS_VERSION = (1, 5, 8)
-
+DEBUG=True
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
          'NAME': 'geonode',
          'USER': 'geonode',
          'PASSWORD': 'geonode',
-         'HOST' : 'localhost',
-         'PORT' : '32774',
      },
     # vector datastore for uploads
     'datastore' : {
@@ -22,7 +19,7 @@ DATABASES = {
         'USER' : 'geonode',
         'PASSWORD' : 'geonode',
         'HOST' : 'localhost',
-        'PORT' : '32774',
+        'PORT' : '5432',
     }
 }
 
@@ -30,10 +27,10 @@ DATABASES = {
 OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
-        'LOCATION' : 'http://localhost:8389/geoserver/',
-        'PUBLIC_LOCATION' : 'http://localhost:8389/geoserver/',
+        'LOCATION' : 'http://localhost:8080/geoserver/',
+        'PUBLIC_LOCATION' : 'http://localhost:8080/geoserver/',
         'USER' : 'admin',
-        'PASSWORD' : 'geoserver',
+        'PASSWORD' : 'admin',
         'MAPFISH_PRINT_ENABLED' : True,
         'PRINT_NG_ENABLED' : True,
         'GEONODE_SECURITY_ENABLED' : True,
@@ -70,7 +67,13 @@ CATALOGUE = {
     }
 }
 
-ALLOWED_HOSTS = ['geonode']
+#TEMPLATE_DIRS = (
+#    os.path.join(PROJECT_ROOT, 'template1'),
+#)
+
+STATIC_ROOT= os.path.join(PROJECT_ROOT,'static_root/')
+
+ALLOWED_HOST = ['domain or IP']
 BING_API_KEY="Ahf4VmhfkqUIAajmQd4tMxz6YJIzwm8roCq0weBlDP-ePPZDln2HtaZfZPvGwXEw"
 # Default preview library
 #LAYER_PREVIEW_LIBRARY = 'geoext'
