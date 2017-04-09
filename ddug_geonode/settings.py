@@ -59,3 +59,50 @@ LOCALE_PATHS = (
     os.path.join(LOCAL_ROOT, 'locale'),
     ) + LOCALE_PATHS
 
+
+# Debug_toolbar settings
+if DEBUG:
+    INTERNAL_IPS = ('127.0.0.1',)
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
+
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+    }
+
+
+# setting for 
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'ddug_geonode_oauth.backends.dataug.DataugOAuth2',
+    'social.backends.github.GithubOAuth2',
+) + AUTHENTICATION_BACKENDS
+
+INSTALLED_APPS += (
+    'social.apps.django_app.default',    
+    'ddug_geonode_oauth',
+)
