@@ -115,3 +115,34 @@ form.search-form input:focus{
     margin-bottom: 21px;
     padding: 8px 15px;
 }
+
+
+.account-masthead .account ul li a {
+    display: block;
+    font-size: 13px;
+    padding: 0 10px;
+    line-height: 31px;
+}
+
+
+.account-masthead {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.account-masthead {
+    min-height: 30px;
+    color: #ffffff;
+}
+.account-masthead .account {
+    float: right;
+}
+
+
+body {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 0px;
+}
+

@@ -1,0 +1,419 @@
+{% load i18n avatar_tags %}
+<!DOCTYPE html>
+<!--[if IE 7]> <html lang="en" class="ie ie7"> <![endif]-->
+<!--[if IE 8]> <html lang="en" class="ie ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+  <head>
+  
+  {# NewHead start #}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    {% block head %}
+      {% if DEBUG_STATIC %}
+      <link href="{{ STATIC_URL }}lib/css/jquery.dataTables.css?v={{ VERSION }}" rel="stylesheet" />
+      <link href="{{ STATIC_URL }}lib/css/select2.css?v={{ VERSION }}" rel="stylesheet"/>
+      <link href="{{ STATIC_URL }}lib/css/bootstrap.min.css?v={{ VERSION }}" rel="stylesheet"/>
+      <link href="{{ STATIC_URL }}lib/css/jquery-ui.css?v={{ VERSION }}" rel="stylesheet"/>
+      <link href="{{ STATIC_URL }}lib/css/bootstrap-datetimepicker.css?v={{ VERSION }}" rel="stylesheet"/>
+      {% else %}
+      <link href="{{ STATIC_URL }}lib/css/assets.min.css?v={{ VERSION }}" rel="stylesheet"/>
+      {% endif %}
+      <link href="{{ STATIC_URL }}geonode/css/ext-compatibility.css?v={{ VERSION }}" rel="stylesheet" />
+      <link href="{{ STATIC_URL }}geonode/css/base.css?v={{ VERSION }}" rel="stylesheet" />
+      <style type="text/css">[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}</style>
+      {% block extra_head %}
+      {% endblock %}
+    {% endblock %}
+    <!--[if IE]>
+      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <style>
+        #ieflag{
+            display: block !important;
+            height: 150px;
+            text-align: center;
+        }
+      </style>
+    <![endif]-->
+    <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
+    {# <link rel="shortcut icon" href="/images/icons/ckan.ico" /> #}
+    <link rel="search" type="application/opensearchdescription+xml" href="/catalogue/opensearch" title="GeoNode Search"/>
+  {# NewHead stop #}    
+    
+  </head>
+
+  
+  <body  class="{% block body_class %}{% endblock %}" >
+
+    
+    <div class="hide"><a href="#content">Skip to content</a></div>
+  
+
+ {% comment %}
+    {% block header %}
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url "home" %}">GeoNode</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            {% block tabs %}
+            <li id="nav_layers">
+              <a href="{% url "layer_browse" %}">{% trans "Layers" %}</a>
+            </li>
+            <li id="nav_maps">
+              <a href="{% url "maps_browse" %}">{% trans "Maps" %}</a>
+            </li>
+            <li id="nav_documents">
+              <a href="{% url "document_browse" %}">{% trans "Documents" %}</a>
+            </li>
+           {% block extra_tab %}
+           {% endblock %}
+            <li id="nav_people">
+              <a href="{% url "profile_browse" %}">{% trans "People" %}</a>
+            </li>
+            <li id="nav_groups">
+              <a href="{% url "group_list" %}">{% trans "Groups" %}</a>
+            </li>
+            {% endblock %}
+          </ul>
+          <form class="navbar-form" id="search" action="{% url "search" %}" >
+            <div class="col-md-3">
+              <div class="input-group">
+                {% if HAYSTACK_SEARCH %}
+                <input id="search_input" type="text" placeholder="Search" class="form-control" name="q">
+                {% else %}
+                <input id="search_input" type="text" placeholder="Search" class="form-control" name="title__icontains">
+                {% endif %}
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                </span>
+              </div>
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            {% if not user.is_authenticated and REGISTRATION_OPEN %}
+            <li><a href="{% url "account_signup" %}">{% trans "Register" %}</a></li>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <li>
+              <a href="#" data-toggle="modal" data-target="#UserModal" role="button" aria-expanded="false">
+                {% avatar user 30 %} {{ user.username }}
+              </a>
+            </li>
+            {% else %}
+            <li>
+              <a href="#" data-toggle="modal" data-target="#SigninModal" role="button" >
+                {% trans "Sign in" %} 
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    {% endblock header %}
+ {% endcomment %} 
+
+{# header Start #}
+  {% block header %}
+    
+
+
+  <header class="account-masthead">
+    <div class="container">
+      
+        
+          <nav class="account not-authed">
+            <ul class="unstyled">
+             
+              
+
+            {% if user.is_authenticated %}
+            <li>
+              <a href="#" data-toggle="modal" data-target="#UserModal" role="button" aria-expanded="false">
+                {{ user.username }}
+              </a>
+            </li>
+            <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
+            {% else %}
+            <li>
+		<a href="{% url 'social:begin' 'dataug' %}">Login with data.ug</a>
+            </li>
+            <li><a href="{% url "account_signup" %}">{% trans "Register" %}</a></li>
+            {% endif %}  
+          
+            </ul>
+          </nav>
+        
+      
+    </div>
+  </header>
+
+
+
+<header class="navbar container navbar-default" role="banner" id="navbar">
+  <div class="container">
+    <div class="navbar-header">
+            <a title="Home" href="/" class="logo navbar-btn pull-left">
+        <img alt="Home" src="{{ STATIC_URL }}img/logo.png" style="width: 250px; height: 42px;">
+      </a>
+     
+      <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+      <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+          <div class="navbar-collapse collapse">
+        <nav role="navigation">
+                      <ul class="menu nav navbar-nav">
+<li><a href="/">Home</a></li>
+
+<li class="active"><a href="http://maps.data.ug">Maps</a></li>
+<li><a href="/dataset">Datasets</a></li>
+<li><a href="/feedback">Request</a></li>
+<li><a href="/pages/test-page-2">Documentation</a></li>
+ 
+            
+
+<!-- ===== --> 
+<li><a href="/blog">News</a></li>
+
+----
+
+----
+<!-- ===== --> 
+</ul>                                            
+<div class="region region-navigation">
+ <!-- /.block -->
+  </div>
+                  </nav>
+      </div>
+      </div>
+</header>
+
+  {% endblock header %}
+{#header stop #}
+
+
+
+  
+    <div role="main">
+      <div id="content" class="container">
+
+            <div class="flash-messages">
+  
+            </div>
+            <div class="toolbar">  
+            </div>
+          <div class="row wrapper no-nav">
+            
+  <section class="module-content">
+{% comment %}
+    
+    <h1 class="page-heading">Documentation</h1>
+    
+      <div class="ckanext-pages-content">
+        
+        
+          <div>
+              <p>Test Page 2 Test Page 2 Test Page 2 Test Page 2 Test Page 2 Test Page 2 Test Page 2 Test Page 2</p>
+
+          </div>
+        
+      </div>
+{% endcomment %}
+
+    {% block middle %}
+    <div class="container">
+      {% include "_status_message.html" %}
+      {% include "_announcements.html" %}
+      {% include "_messages.html" %}
+      {% block body_outer %}
+      <div class="row">
+        <div class="col-md-8">
+        {% block body %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+        {% block sidebar %}{% endblock %}
+        </div>
+      </div>
+      {% endblock %}
+    </div>
+    {% endblock middle %}  
+  
+  </section>
+
+
+            
+          </div>
+        
+      </div>
+    </div>
+
+  
+    <footer class="footer">
+    <div class="region region-footer well well-lg container">
+{% comment %}
+    <section class="block block-multiblock clearfix" id="block-multiblock-2">
+  <form action="http://catalog.data.ug/dataset" class="search-form form-inline" method="get" role="search">
+  <div class="input-group">
+    <input type="search" placeholder="Agriculture" class="search-field form-control" name="q" value="" data-strings="{&quot;targets&quot;:[&quot;Agriculture&quot;,&quot;Fishing&quot;,&quot;Housing&quot;]}" title="Example searches: Agriculture,Fishing,Housing" id="search-footer">
+    <input type="hidden" value="score desc, name asc" name="sort">
+      <span class="input-group-btn">
+      <button class="search-submit btn btn-default" type="submit">
+           <i class="icon-search"></i>
+           <span class="sr-only">Search</span>
+       </button>
+    </span>
+  </div>
+</form>
+</section> <!-- /.block -->
+{% endcomment %}
+<section class="block block-system block-menu clearfix" id="block-system-main-menu">
+
+      
+  <ul class="menu nav"><li class="first leaf"><a href="http://www.data.ug/">Home</a></li>
+<li class="leaf"><a title="Datasets for Data.Ug" href="http://catalog.data.ug">Datasets</a></li>
+<li class="leaf"><a title="Datasets for Data.Ug" href="http://maps.data.ug">Maps</a></li>
+
+
+<!--
+<li class="expanded dropdown"><a data-toggle="dropdown" class="dropdown-toggle" data-target="#" title="Maps on Data.Ug" href="http://maps.data.ug">Maps <span class="caret"></span></a><ul class="dropdown-menu"><li class="first leaf"><a title="Map layers about Uganda" href="http://maps.data.ug">Layers</a></li>
+<li class="last leaf"><a title="Map Publishers" href="http://maps.data.ug/people">People</a></li>
+</ul></li>
+
+-->
+
+<!--
+<li class="leaf active-trail active"><a class="active-trail active" title="All documentation about Data.Ug" href="http://www.data.ug/book">Documentation</a></li> 
+-->
+<li class="last leaf"><a title="News Items" href="http://www.data.ug/blog">News
+</a></li>
+</ul>
+
+</section> <!-- /.block -->
+<section class="block block-menu clearfix" id="block-menu-menu-content">
+      
+
+<!--
+  <li class="last leaf"><a title="Login to CKAN" href="http://catalog.data.ug/user/login">Login</a></li>
+-->
+
+</section> <!-- /.block -->
+<section class="block block-menu clearfix" id="block-menu-menu-social-media">
+
+      
+  <ul class="menu nav">
+
+<li class="first leaf"><a title="Follow us on Facebook" href="https://www.facebook.com/datadotug"> <span class="fa fa-facebook fa-lg"></span>&nbsp;Facebook</a></li>
+<li class="last leaf"><a title="Follow us on Twitter" href="http://www.twitter.com/datadotug"><span class="fa fa-twitter fa-lg"></span>&nbsp;Twitter</a></li>
+</li>
+<li class="last leaf"><a title="Follow us on Github" href="https://github.com/DataDotUG"><span class="fa fa-github fa-lg"></span>&nbsp;Github</a></li>
+</ul>
+</section> <!-- /.block -->
+<section class="block block-system clearfix" id="block-system-powered-by">
+
+      
+  <span>Powered by <a href="http://geonode.org/">Geonode</a></span>
+</section> <!-- /.block -->
+
+
+  </div>
+  
+    
+  
+</footer>
+
+
+
+  
+    
+    
+    
+      
+    
+  
+    
+{% comment %}
+      
+  <script>document.getElementsByTagName('html')[0].className += ' js';</script>
+<script type="text/javascript" src="/fanstatic/vendor/:version:2017-01-17T11:27:46.80/jquery.min.js"></script>
+<script type="text/javascript" src="/fanstatic/vendor/:version:2017-01-17T11:27:46.80/:bundle:bootstrap/js/bootstrap.min.js;jed.min.js;moment-with-locales.js;select2/select2.min.js"></script>
+<script type="text/javascript" src="/fanstatic/base/:version:2017-01-17T11:27:46.79/:bundle:plugins/jquery.inherit.min.js;plugins/jquery.proxy-all.min.js;plugins/jquery.url-helpers.min.js;plugins/jquery.date-helpers.min.js;plugins/jquery.slug.min.js;plugins/jquery.slug-preview.min.js;plugins/jquery.truncator.min.js;plugins/jquery.masonry.min.js;plugins/jquery.form-warning.min.js;sandbox.min.js;module.min.js;pubsub.min.js;client.min.js;notify.min.js;i18n.min.js;main.min.js;modules/select-switch.min.js;modules/slug-preview.min.js;modules/basic-form.min.js;modules/confirm-action.min.js;modules/api-info.min.js;modules/autocomplete.min.js;modules/custom-fields.min.js;modules/related-item.min.js;modules/data-viewer.min.js;modules/table-selectable-rows.min.js;modules/resource-form.min.js;modules/resource-upload-field.min.js;modules/resource-reorder.min.js;modules/resource-view-reorder.min.js;modules/follow.min.js;modules/activity-stream.min.js;modules/dashboard.min.js;modules/resource-view-embed.min.js;view-filters.min.js;modules/resource-view-filters-form.min.js;modules/resource-view-filters.min.js;modules/table-toggle-more.min.js;modules/dataset-visibility.min.js;modules/media-grid.min.js;modules/image-upload.min.js"></script>
+<script type="text/javascript" src="/fanstatic/base/:version:2017-01-17T11:27:46.79/tracking.min.js"></script>
+<script type="text/javascript" src="/fanstatic/pages/:version:2017-01-17T12:28:31.39/:bundle:js/pages-editor.js;js/medium-editor.min.js"></script>
+
+{% endcomment %}
+
+    {% if DEBUG_STATIC %}
+    <script src="{{ STATIC_URL }}lib/js/jquery.min.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/jquery.dataTables.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/jquery.timeago.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/jquery.ajaxprogress.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/jquery.ajaxQueue.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/jquery-ui.custom.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/jquery.raty.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/bootstrap.min.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/moment-with-locales.min.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/bootstrap-datetimepicker.min.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/json2.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/select2.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}lib/js/waypoints.js?v={{ VERSION }}"></script>
+    {% else %}
+    <script src="{{ STATIC_URL }}lib/js/assets.min.js?v={{ VERSION }}"></script>
+    {% endif %}
+    <script src="{{ STATIC_URL }}geonode/js/utils/utils.js?v={{ VERSION }}"></script>
+    <script src="{{ STATIC_URL }}geonode/js/base/base.js?v={{ VERSION }}"></script>
+    {% include 'autocomplete_light/static.html' %}
+    <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
+    {% block extra_script %}{% endblock extra_script %}
+    <script type="text/javascript">
+        var autocomplete = $('#search_input').yourlabsAutocomplete({
+            url: '{% url "autocomplete_light_autocomplete" "ResourceBaseAutocomplete" %}',
+            choiceSelector: 'span',
+            hideAfter: 200,
+            minimumCharacters: 1,
+            placeholder: '{% trans 'Type your search here ...' %}',
+            appendAutocomplete: $('#search_input'),
+            autoHilightFirst: false
+        });
+        $('#search_input').bind('selectChoice', function(e, choice, autocomplete) {
+            if(choice[0].children[0] == undefined) {
+                $('#search_input').val($(choice[0]).text());
+                $('#search').submit();
+            }
+        });
+    </script>
+    <script>
+        // Workaround to fix the autocomplete box positions
+        yourlabs.Autocomplete.prototype.fixPosition = function(html) {
+            this.input.parents().filter(function() {
+                return $(this).css('overflow') === 'hidden';
+            }).first().css('overflow', 'visible');
+            if(this.input.attr('name') !== 'resource-keywords'){
+              this.box.insertAfter(this.input).css({top: 0, left: 0});
+            }else{
+              var pos = $.extend({}, this.input.position(), {
+                height: this.input.outerHeight()
+              });
+              this.box.insertAfter(this.input).css({top: pos.top + pos.height, left: pos.left});
+            }
+        };
+    </script>
+    <script type="text/javascript" src="{% url "lang" %}"></script>
+</body>
+</html>

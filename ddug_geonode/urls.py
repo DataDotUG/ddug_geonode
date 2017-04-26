@@ -11,6 +11,11 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('',
     url('', include('social.apps.django_app.urls', namespace='social')),
+    #url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
+    url(r'^logout/$',
+      'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'
+    ),
+
 )
     
 

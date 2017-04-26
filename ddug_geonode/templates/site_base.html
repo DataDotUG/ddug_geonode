@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% block extra_head %}
-      <link href="{{ STATIC_URL }}css/site_base.css" rel="stylesheet"/>
-{% endblock %}
+{% load i18n %}
+
 {% block extra_tab %}
 {% comment %}
 Add Tab for Third Party Apps
@@ -10,3 +9,13 @@ Add Tab for Third Party Apps
 </li>
 {% endcomment %}
 {% endblock %}
+
+
+
+{% block extra_head %}
+
+<link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet"/>
+
+<link href="{{ STATIC_URL }}css/site_base.css" rel="stylesheet"/>
+{% endblock %}
+
