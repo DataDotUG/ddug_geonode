@@ -11,12 +11,14 @@ from social.backends.oauth import BaseOAuth2
 class DataugOAuth2(BaseOAuth2):
     """Github OAuth authentication backend"""
     name = 'dataug'
-    AUTHORIZATION_URL = 'http://localhost:5000/oauth2/authorize'
-    ACCESS_TOKEN_URL = 'http://localhost:5000/oauth2/access_token'
+    # AUTHORIZATION_URL = 'http://localhost:5000/oauth2/authorize'
+    # ACCESS_TOKEN_URL = 'http://localhost:5000/oauth2/access_token'
+    AUTHORIZATION_URL = 'http://catalog.data.ug/oauth2/authorize'
+    ACCESS_TOKEN_URL = 'http://catalog.data.ug/oauth2/access_token'
     ACCESS_TOKEN_METHOD = 'POST'
     SCOPE_SEPARATOR = ','
     DEFAULT_SCOPE = [
-        'http://localhost:5000/oauth2/identity',
+        'http://catalog.data.ug/oauth2/identity',
     ]
     EXTRA_DATA = [
         ('id', 'id'),
@@ -50,6 +52,6 @@ class DataugOAuth2(BaseOAuth2):
 
     def _user_data(self, access_token, path=None):
         #url = 'https://api.github.com/user{0}'.format(path or '')
-	url = 'http://localhost:5000/oauth2/identity'
+	url = 'http://catalog.data.ug/oauth2/identity'
         return self.get_json(url, params={'access_token': access_token})
 
