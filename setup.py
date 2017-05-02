@@ -23,6 +23,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'django-tastypie==0.11.0',
+        'geonode==2.4.1'
     ]
 )
